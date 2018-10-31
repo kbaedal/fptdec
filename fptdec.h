@@ -42,17 +42,43 @@ bool valid_number(const std::string &str, std::string &t);
 class decimal {
     public:
         // Constructors
+        decimal() : decimal(6, 2) {};
         decimal(unsigned int nc, unsigned int nd);
         decimal(const decimal &d);
+        decimal(decimal &&d) // Move constructor.
+        {
+            std::cout << "Move constructor." << std::endl;
+            swap(*this, d);
+        }
 
         // Destructor
         ~decimal();
 
         // Operators - Asignation.
-        decimal &operator=(const decimal &d);
+        //decimal &operator=(const decimal &d);
+		decimal &operator=(decimal d) // Move semantics, note pass by value.
+        {
+            std::cout << "Move assignment." << std::endl;
+            swap(*this, d);
+            
+            return *this;
+        }
         decimal &operator=(const std::string &d);
         decimal &operator=(const int &d);
         decimal &operator=(const double &d);
+		
+        friend swap(decimal &a, decimal &b)
+        {
+            std::swap(a.cifs, b.cifs);
+            std::swap(a.ents, b.ents);
+            std::swap(a.decs, b.decs);
+
+            std::swap(a.status, b.status);
+
+            std::swap(a.long_buffer, b.long_buffer);
+
+            std::swap(a.buffer, b.buffer);
+         }   
 
         // Operators: Negation (unary minus).
         decimal operator-()

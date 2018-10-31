@@ -11,7 +11,8 @@
 
 namespace fpt {
 
-decimal::decimal(unsigned int nc, unsigned int nd) :  ents(nc - nd), decs(nd), cifs(nc)
+decimal::decimal(unsigned int nc, unsigned int nd) :  
+	ents(nc - nd), decs(nd), cifs(nc), buffer(nullptr)
 {
     if((cifs < 1) || (cifs < decs))
         throw std::out_of_range("Numero de cifras incorrecto.");
@@ -54,6 +55,7 @@ decimal::~decimal()
     delete [] buffer;
 }
 
+/*
 decimal &decimal::operator=(const decimal &d)
 {
     if(this != &d) {    // Autoasignacion
@@ -73,6 +75,7 @@ decimal &decimal::operator=(const decimal &d)
 
     return *this;
 }
+*/
 
 decimal &decimal::operator=(const std::string &val)
 {
@@ -1072,7 +1075,7 @@ void decimal::set_cifra(uint8_t val, unsigned int pos)
         val &= 0x0F;                // Solo los 4 bits del nybble inferior.
         val = val << 4;             // Datos al nybble superior.
         buffer[pos/2] &= 0x0F;      // Limpiamos posicion.
-        buffer[pos/2] |= val;       // Colocamos cifra.
+        buffer[pos/2] |= val;    ,   // Colocamos cifra.
     }
     else {
         val &= 0x0F;                // Solo los 4 bits del nybble inferior.
