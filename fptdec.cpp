@@ -484,8 +484,11 @@ decimal &decimal::operator/=(const decimal &d)
     // No dividimos, calculamos el inverso multiplicativo de d,
     // y lo multiplicamos por el decimal.
 
+    if( this->abs() == 0.0 )
+        return *this;
+
     if(d.abs() == 0.0) {
-        throw std::invalid_argument("Division entre 0.");
+        throw std::invalid_argument("Division by zero.");
     }
     else {
         int ne  = ents;
@@ -757,7 +760,7 @@ std::string decimal::to_smoney(std::string suffix) const
 		t = t.substr(1, t.size() - 1);
 		signo = true;
 	}
-	
+
     // Para la parte entera, por cada tres cifras añadimos una coma,
     // para mejorar la legibilidad.
     size_t point_pos = t.find_first_of('.');
@@ -774,11 +777,11 @@ std::string decimal::to_smoney(std::string suffix) const
             }
         }
     }
-	
+
 	// Volvemos a colocar el signo, si lo había.
 	if(signo)
 		t = c + t;
-	
+
 	// Añadimos el sufijo.
 	t += suffix;
 
@@ -792,14 +795,14 @@ std::string decimal::to_sinvm(std::string suffix) const
     // Convertimos a smoney, punto decimal y comas de separacion.
 	// Recorremos la cadena y cambiamos los puntos por comas y
 	// las comas por puntos.
-	
+
 	for(size_t i = 0; i < t.size(); ++i) {
 		switch(t[i]) {
 			case '.': t[i] = ','; break;
 			case ',': t[i] = '.'; break;
 			default: break;
 		}
-	}		
+	}
 
     t += suffix;
 
