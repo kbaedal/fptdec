@@ -413,14 +413,11 @@ decimal decimal::inverse() const
     //              x = r;
     //      }
     //
-    unsigned int    td = decs,
-                    tc = cifs;
+    unsigned int    td = decs * 2,
+                    tc = cifs * 2;
 
-    int             i = 2;  // Veces que aumentaremos cifras racionales para mejorar la
-                            // precision. Equivale a añadir 4 cifras racionales para mejorar
-                            // el cálculo. A partir de aquí, las pérdidas de precision las
-                            // consideramos insignificantes, aumentar cifras no va a producir
-                            // un resultado mejor.
+    int             i = 2;   // Veces que duplicamos cifras racionales para mejorar la
+                            // precision.                            
 
     decimal p(tc, td),  // Precision deseada.
             x(tc, td),  // Resultado.
@@ -453,14 +450,16 @@ decimal decimal::inverse() const
             else
                 x = r;
         }
-
+        
         // Puede ser que al redondear no obtengamos el mejor resultado posible,
-        // así que aumentamos dos cifras decimales y repetimos el cálculo.
-        if((x * c) == 1.0)
+        // así que aumentamos las cifras decimales y repetimos el cálculo.
+        
+        if((x * c) == "1.0") {
             break;
+        }        
         else {
-            tc += 2;
-            td += 2;
+            tc *= 2;
+            td *= 2;
 
             p.resize(tc, td);
             p = p.min();
@@ -750,16 +749,16 @@ std::string decimal::to_str(bool format) const
 
 std::string decimal::to_smoney(std::string suffix) const
 {
-    std::string 	t = this->to_str();
-	bool			signo = false;
-	char			c;
+    std::string     t = this->to_str();
+    bool            signo = false;
+    char            c;
 
-	// Si tiene signo negativo, lo eliminamos.
-	if(t[0] == '-') {
-		c = t[0];
-		t = t.substr(1, t.size() - 1);
-		signo = true;
-	}
+    // Si tiene signo negativo, lo eliminamos.
+    if(t[0] == '-') {
+        c = t[0];
+        t = t.substr(1, t.size() - 1);
+        signo = true;
+    }
 
     // Para la parte entera, por cada tres cifras añadimos una coma,
     // para mejorar la legibilidad.
@@ -778,12 +777,12 @@ std::string decimal::to_smoney(std::string suffix) const
         }
     }
 
-	// Volvemos a colocar el signo, si lo había.
-	if(signo)
-		t = c + t;
+    // Volvemos a colocar el signo, si lo había.
+    if(signo)
+        t = c + t;
 
-	// Añadimos el sufijo.
-	t += suffix;
+    // Añadimos el sufijo.
+    t += suffix;
 
     return t;
 }
@@ -793,16 +792,16 @@ std::string decimal::to_sinvm(std::string suffix) const
     std::string t = this->to_smoney("");
 
     // Convertimos a smoney, punto decimal y comas de separacion.
-	// Recorremos la cadena y cambiamos los puntos por comas y
-	// las comas por puntos.
+    // Recorremos la cadena y cambiamos los puntos por comas y
+    // las comas por puntos.
 
-	for(size_t i = 0; i < t.size(); ++i) {
-		switch(t[i]) {
-			case '.': t[i] = ','; break;
-			case ',': t[i] = '.'; break;
-			default: break;
-		}
-	}
+    for(size_t i = 0; i < t.size(); ++i) {
+        switch(t[i]) {
+            case '.': t[i] = ','; break;
+            case ',': t[i] = '.'; break;
+            default: break;
+        }
+    }
 
     t += suffix;
 
@@ -847,7 +846,7 @@ bool operator==(const decimal &a, const std::string &b)
     decimal t(a.cifs, a.decs);
 
     t = b;
-
+    
     return a == t;
 }
 
