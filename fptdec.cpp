@@ -749,42 +749,40 @@ std::string decimal::to_str(bool format) const
 
 std::string decimal::to_smoney(std::string suffix) const
 {
-    std::string     t = this->to_str();
-    bool            signo = false;
-    char            c;
+    std::string  t = this->to_str(),
+                r;
 
     // Si tiene signo negativo, lo eliminamos.
-    if(t[0] == '-') {
-        c = t[0];
+    if(t[0] == '-')
         t = t.substr(1, t.size() - 1);
-        signo = true;
-    }
-
+    
     // Para la parte entera, por cada tres cifras añadimos una coma,
     // para mejorar la legibilidad.
     size_t point_pos = t.find_first_of('.');
+    r = t.substr(point_pos, point_pos - t.size()); // Copiamos el final en el resultado.
 
     if(point_pos > 3) {
-        int j = 0;
-        for(int i = point_pos; i > 0; --i) {
-            if(j == 3) {
-                t.insert(i, 1, ',');
+        for(int i = point_pos - 1, j = 1; i >= 0; --i, ++j) {
+            r.insert(0, 1, t[i]);
+            
+            if( (j >= 3) && (i != 0) ) {
+                r.insert(0, 1, ',');
                 j = 0;
-            }
-            else {
-                ++j;
             }
         }
     }
+    else { // No necesitamos colocar separaciones.
+        r = t;
+    }
 
     // Volvemos a colocar el signo, si lo había.
-    if(signo)
-        t = c + t;
+    if(this->is_negative())
+        r.insert(0, 1, '-');
 
     // Añadimos el sufijo.
-    t += suffix;
-
-    return t;
+    r += suffix;
+    
+    return r;
 }
 
 std::string decimal::to_sinvm(std::string suffix) const
