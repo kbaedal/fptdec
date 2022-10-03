@@ -20,7 +20,7 @@ decimal::decimal(unsigned int nc, unsigned int nd) :  ents(nc - nd), decs(nd), c
     status = 0x00;
 
     // Necesitamos 4 bits por cifra, 1 byte por cada 2 cifras.
-    // Si cifs es impar, aÒadimos un byte por el redondeo.
+    // Si cifs es impar, a√±adimos un byte por el redondeo.
     long_buffer = ((cifs % 2) != 0) ? ((cifs/2) + 1) : (cifs/2);
 
     buffer      = new uint8_t[long_buffer];
@@ -77,8 +77,8 @@ decimal &decimal::operator=(const decimal &d)
 decimal &decimal::operator=(const std::string &val)
 {
     // Comprobamos que la cadena sea un numero, y la convertimos.
-    // La funcion convertir llamar· a resize(), que lanzar· una
-    // excepciÛn si el nuevo contenido no cabe en el decimal.
+    // La funcion convertir llamar√° a resize(), que lanzar√° una
+    // excepci√≥n si el nuevo contenido no cabe en el decimal.
     std::string tv = val;
 
     if(tv.empty())
@@ -121,7 +121,7 @@ decimal &decimal::operator+=(const decimal &d)
      *       R
      *
      *  Dependiendo del signo de S1 y de S2, y de su valor absoluto, tendremos que
-     *  realizar una operaciÛn u otra:
+     *  realizar una operaci√≥n u otra:
      *      - Si S1(+) y S2(+): R = abs(S1) + abs(S2), R(+)
      *      - Si S1(+) y S2(-):
      *          - Si abs(S1) >= abs(S2): R = abs(S1) - abs(S2), R(+).
@@ -133,7 +133,7 @@ decimal &decimal::operator+=(const decimal &d)
      *
      */
 
-    // Cambiamos el tamaÒo del decimal a sumar. Con esto garantizamos dos cosas:
+    // Cambiamos el tama√±o del decimal a sumar. Con esto garantizamos dos cosas:
     //  1. Que la suma se pueda realizar (mismo numero de enteros y racionales).
     //  2. Que se ha redondeado correctamente.
     decimal s2(d);
@@ -194,7 +194,7 @@ decimal &decimal::operator-=(const decimal &d)
      *      R esultado
      *
      *  Dependiendo del signo de M y de S, y de su valor absoluto, tendremos que
-     *  realizar una operaciÛn u otra:
+     *  realizar una operaci√≥n u otra:
      *      - Si M(+) y S(+):
      *          - Si abs(M) >= abs(S) R = abs(M) - abs(S), R(+).
      *          - Si abs(M) < abs(S) R = abs(S) - abs(M), R(-).
@@ -206,7 +206,7 @@ decimal &decimal::operator-=(const decimal &d)
      *
      */
 
-    // Cambiamos el tamaÒo del decimal a restar. Con esto garantizamos dos cosas:
+    // Cambiamos el tama√±o del decimal a restar. Con esto garantizamos dos cosas:
     //  1. Que la resta se pueda realizar (mismo numero de enteros y decimales).
     //  2. Que se haya redondeado el decimal correctamente.
     decimal ss(d);
@@ -291,7 +291,7 @@ void decimal::resta(const decimal &res)
 {
     // Por cada cifra del decimal, empezando por el final:
     //  1. Comprobamos si operador 1 es mayor o igual operador 2.
-    //  2. Si lo es, restamos. Si no, aÒadimos 10, indicando acarreo para el siguiente, y restamos.
+    //  2. Si lo es, restamos. Si no, a√±adimos 10, indicando acarreo para el siguiente, y restamos.
 
     bool acarreo = false;
 
@@ -318,9 +318,9 @@ void decimal::resta(const decimal &res)
 decimal &decimal::operator*=(const decimal &d)
 {
 
-    // Declaramos un temporal que tendr· el doble de cifras
+    // Declaramos un temporal que tendr√° el doble de cifras
     // que los numeros que estamos multiplicando. Cambiaremos
-    // el tamaÒo del multiplicador si es necesario para que
+    // el tama√±o del multiplicador si es necesario para que
     // coincida con el del multiplicando.
     // Y la multiplicacion se reduce a ir haciendo multiplicaciones
     // parciales y acumulando el resultado, siempre controlando
@@ -329,9 +329,9 @@ decimal &decimal::operator*=(const decimal &d)
     uint8_t res     = 0,
             acarreo = 0;
 
-    decimal mtdr(d),                    // Multiplicador, para poder cambiar tamaÒo.
+    decimal mtdr(d),                    // Multiplicador, para poder cambiar tama√±o.
             t1(2 * cifs, 2 * decs),     // Temporal donde colocaremos las multiplicaciones parciales.
-            t2(2 * cifs, 2 * decs);     // Acumulador. Sumamos aquÌ las multiplicaciones.
+            t2(2 * cifs, 2 * decs);     // Acumulador. Sumamos aqu√≠ las multiplicaciones.
 
     bool res_negativo = (this->is_negative() != d.is_negative());
 
@@ -357,7 +357,7 @@ decimal &decimal::operator*=(const decimal &d)
         }
     }
 
-    // Cambiamos de tamaÒo para acomodarlo.
+    // Cambiamos de tama√±o para acomodarlo.
     t2.resize(cifs, decs);
     // Y copiamos el resultado.
     *this = t2;
@@ -372,12 +372,12 @@ decimal &decimal::operator*=(const decimal &d)
 
 decimal decimal::inverse() const
 {
-    // MÈtodo Newton-Raphson:
+    // M√©todo Newton-Raphson:
     //  - Obtener una estimacion x(0) de 1/decimal, para lo que calculamos
-    //    estimaciones cada vez m·s precisas de x(1), x(2), ..., x(s).
+    //    estimaciones cada vez m√°s precisas de x(1), x(2), ..., x(s).
     //  - Para aplicar el metodo se necesita una funcion f(x) que sea 0 cuando
     //    x = 1/decimal. En este caso, f(x) = (1/x) - d. Para esta funcion,
-    //    el mÈtodo Newton-Raphson resuelve:
+    //    el m√©todo Newton-Raphson resuelve:
     //
     //                        f(x(i))
     //      x(i+1) = x(i) - ----------
@@ -392,10 +392,10 @@ decimal decimal::inverse() const
     //
     //      x(i+1) = x(i) * (2 - d * x(i))
     //
-    //    Repetimos el c·lculo hasta que 1-p < d * x < 1+p, donde p es la
-    //    precision que queremos en el c·lculo, que deberÌa ser la m·xima
-    //    posible. Para este caso, le daremos el valor del decimal m·s pequeÒo
-    //    que se pueda almacenar. AÒadimos un control para el caso de que
+    //    Repetimos el c√°lculo hasta que 1-p < d * x < 1+p, donde p es la
+    //    precision que queremos en el c√°lculo, que deber√≠a ser la m√°xima
+    //    posible. Para este caso, le daremos el valor del decimal m√°s peque√±o
+    //    que se pueda almacenar. A√±adimos un control para el caso de que
     //    la inversa no produzca el resultado esperado debido a la falta
     //    de redondeo de posiciones inferiores, que no calculamos.
     //
@@ -441,18 +441,23 @@ decimal decimal::inverse() const
         while((x * c) > (1.0 + p) || (x * c) < (1.0 - p)) {
             r = x * (2.0 - c * x);
 
-            // Comprobamos si hemos alcanzado el valor m·s prÛximo posible
-            // a la soluciÛn correcta. Para obtener un resultado m·s preciso
-            // deberÌamos aumentar el n˙mero de cifras decimales.
-            if(r == x) {
+            // Comprobamos si hemos alcanzado el valor m√°s pr√≥ximo posible
+            // a la soluci√≥n correcta. Para obtener un resultado m√°s preciso
+            // deber√≠amos aumentar el n√∫mero de cifras decimales.
+            
+            // Damos un peque√±o margen de error, debido a los redondeos es
+            // posible que quedemos atascados en un bucle infinito de valores
+            // que oscilan entre x - x.min() y x + x.min().
+            if( ((r - r.min()) < x) && x <= ((r + r.min())) ) {
                 break;
             }
-            else
+            else {
                 x = r;
+            }
         }
         
         // Puede ser que al redondear no obtengamos el mejor resultado posible,
-        // asÌ que aumentamos las cifras decimales y repetimos el c·lculo.
+        // as√≠ que aumentamos las cifras decimales y repetimos el c√°lculo.
         
         if((x * c) == "1.0") {
             break;
@@ -479,7 +484,7 @@ decimal decimal::inverse() const
 decimal &decimal::operator/=(const decimal &d)
 {
     // Utilizaremos un decimal con el  doble de cifras racionales
-    // para asegurar la precisiÛn del c·culo.
+    // para asegurar la precisi√≥n del c√°culo.
     // No dividimos, calculamos el inverso multiplicativo de d,
     // y lo multiplicamos por el decimal.
 
@@ -499,7 +504,7 @@ decimal &decimal::operator/=(const decimal &d)
 
         bool res_negativo = (this->is_negative() != d.is_negative());
 
-        // Copiamos los datos en los temporales con el nuevo tamaÒo.
+        // Copiamos los datos en los temporales con el nuevo tama√±o.
         r = d;
         n = *this;
 
@@ -510,7 +515,7 @@ decimal &decimal::operator/=(const decimal &d)
         // resultado para que tenga la precision adecuada.
         r.rebuild(r.inverse());
 
-        // Cambiamos el tamaÒo del numerador para que la multiplicacion
+        // Cambiamos el tama√±o del numerador para que la multiplicacion
         // sea correcta, y no perdamos precision al redondear.
         n.resize(r);
         *this = n * r;
@@ -536,7 +541,7 @@ void decimal::resize(unsigned int nc, unsigned int nd)
 
     unsigned int    ne  = nc - nd;  // Nuevo numero de enteros.
 
-    // Comprobamos que realmente haya que cambiar el tamaÒo.
+    // Comprobamos que realmente haya que cambiar el tama√±o.
     if((ne != ents) || (nd != decs)) {
         decimal  t(nc, nd);      // Temporal para operaciones.
 
@@ -546,18 +551,18 @@ void decimal::resize(unsigned int nc, unsigned int nd)
                 if(get_cifra(i) != 0)
                     throw std::out_of_range("El cambio de tamanio ha provocado desbordamiento (enteros).");
 
-        // Llegados aquÌ, sabemos que el contenido cabe en el nuevo tamaÒo, asÌ pues,
-        // despuÈs, tras comprobar los decimales y el posible acarreo, podremos copiar
+        // Llegados aqu√≠, sabemos que el contenido cabe en el nuevo tama√±o, as√≠ pues,
+        // despu√©s, tras comprobar los decimales y el posible acarreo, podremos copiar
         // sin riesgo.
 
-        // Ahora los decimales. Para ello habr· que comprobar si hemos de redondear.
+        // Ahora los decimales. Para ello habr√° que comprobar si hemos de redondear.
         if(nd < decs) {
             // Tenemos que reducir el numero de decimales. Comprobamos los que tenemos
             // que eliminar, para controlar el acarreo.
             bool    acarreo = false;
 
             for(unsigned int i = 0; i < decs - nd; ++i) {
-                // Desde el ultimo decimal del viejo n˙mero, hasta el anterior
+                // Desde el ultimo decimal del viejo n√∫mero, hasta el anterior
                 // al que tenemos que copiar, comprobamos si se produce acarreo.
                 uint8_t x = this->get_cifra(i);
 
@@ -570,10 +575,10 @@ void decimal::resize(unsigned int nc, unsigned int nd)
                     acarreo = false;
             }
 
-            // Si se ha producido acarreo, lo aÒadimos a la hora de copiar el
-            // contenido del viejo tamaÒo al nuevo tamaÒo.
+            // Si se ha producido acarreo, lo a√±adimos a la hora de copiar el
+            // contenido del viejo tama√±o al nuevo tama√±o.
             for(unsigned int k = 0, l = decs - nd; k < nc; ++k, ++l) {
-                // Si todavÌa nos quedan cifras en el original, la obtenemos.
+                // Si todav√≠a nos quedan cifras en el original, la obtenemos.
                 uint8_t x = (l < cifs) ? this->get_cifra(l) : 0;
 
                 if(acarreo)
@@ -590,7 +595,7 @@ void decimal::resize(unsigned int nc, unsigned int nd)
                 t.set_cifra(x, k);
             }
 
-            // Si la ˙ltima cifra v·lida del n˙mero es mayor de nueve, entonces
+            // Si la √∫ltima cifra v√°lida del n√∫mero es mayor de nueve, entonces
             // se ha producido un desbordamiento.
             if(t.get_cifra(nc - 1) > 9)
                 throw std::out_of_range("El cambio de tamanio ha provocado desbordamiento (completo).");
@@ -616,9 +621,9 @@ void decimal::resize(unsigned int nc, unsigned int nd)
 
 void decimal::convertir(const std::string &str)
 {
-    // Crearemos un decimal temporal con las caracterÌsiticas
+    // Crearemos un decimal temporal con las caracter√≠siticas
     // del que se ha pasado por cadena. Una vez convertido,
-    // cambiamos el tamaÒo para acomodarlo a las caracterÌsticas
+    // cambiamos el tama√±o para acomodarlo a las caracter√≠sticas
     // del decimal y asignamos.
 
     std::string t   = str;
@@ -671,7 +676,7 @@ void decimal::convertir(const std::string &str)
     }
 
     if(t.size() != 0) {
-        // Nos queda el ˙ltimo n˙mero de la cadena, ya que las cifras eran impares.
+        // Nos queda el √∫ltimo n√∫mero de la cadena, ya que las cifras eran impares.
         lonybble = char_to_pbcd(t.back(), false);
         t.pop_back();
         hinybble = 0xFF;
@@ -679,7 +684,7 @@ void decimal::convertir(const std::string &str)
         x.buffer[x.long_buffer-1] = hinybble & lonybble;
     }
 
-    // Cambiamos al temporal al tamaÒo que necesitamos.
+    // Cambiamos al temporal al tama√±o que necesitamos.
     x.resize(cifs, decs);
     *this = x;
 
@@ -700,23 +705,23 @@ bool valid_number(const std::string &str, std::string &t)
     t.erase(t.find_last_not_of(ws) + 1);
     t.erase(0, t.find_first_not_of(ws));
 
-    // Comprobamos que solo contenga n˙meros, signos m·s o menos, y puntos.
+    // Comprobamos que solo contenga n√∫meros, signos m√°s o menos, y puntos.
     size_t valid_chars = t.find_first_not_of("+-0123456789.");
 
-    // Contamos el n˙mero de puntos. Como m·ximo habr· uno.
+    // Contamos el n√∫mero de puntos. Como m√°ximo habr√° uno.
     size_t num_points = std::count(t.begin(), t.end(), '.');
 
-    // Averiguamos la posiciÛn del signo menos, si lo hay.
+    // Averiguamos la posici√≥n del signo menos, si lo hay.
     size_t pos_minus = t.find_first_of('-');
 
-    // Averiguamos la posiciÛn del signo m·s, si lo hay.
+    // Averiguamos la posici√≥n del signo m√°s, si lo hay.
     size_t pos_plus = t.find_first_of('+');
 
-    // Si todos son caracteres v·lidos, hay como m·ximo un punto, y si
-    // hay un menos o un mas al principio, tenemos un numero v·lido.
+    // Si todos son caracteres v√°lidos, hay como m√°ximo un punto, y si
+    // hay un menos o un mas al principio, tenemos un numero v√°lido.
     return (valid_chars == std::string::npos) && (num_points <= 1) && (
-        (pos_minus == 0 && pos_plus == std::string::npos) || // Hay un signo menos, y no hay signo m·s.
-        (pos_plus == 0 && pos_minus == std::string::npos) || // Hay un singo m·s, y no hay signo menos.
+        (pos_minus == 0 && pos_plus == std::string::npos) || // Hay un signo menos, y no hay signo m√°s.
+        (pos_plus == 0 && pos_minus == std::string::npos) || // Hay un singo m√°s, y no hay signo menos.
         ((pos_minus == std::string::npos) && (pos_plus == std::string::npos)) // No hay signo alguno.
     );
 }
@@ -736,7 +741,7 @@ std::string decimal::to_str(bool format) const
     if(format) {
         t.erase(0, t.find_first_not_of("0"));
 
-        // Si no tenemos ning˙n entero, al menos dejamos un 0.
+        // Si no tenemos ning√∫n entero, al menos dejamos un 0.
         if(t[0] == '.')
             t.insert(0, 1, '0');
     }
@@ -756,7 +761,7 @@ std::string decimal::to_smoney(std::string suffix) const
     if(t[0] == '-')
         t = t.substr(1, t.size() - 1);
     
-    // Para la parte entera, por cada tres cifras aÒadimos una coma,
+    // Para la parte entera, por cada tres cifras a√±adimos una coma,
     // para mejorar la legibilidad.
     size_t point_pos = t.find_first_of('.');
     r = t.substr(point_pos, point_pos - t.size()); // Copiamos el final en el resultado.
@@ -775,11 +780,11 @@ std::string decimal::to_smoney(std::string suffix) const
         r = t;
     }
 
-    // Volvemos a colocar el signo, si lo habÌa.
+    // Volvemos a colocar el signo, si lo hab√≠a.
     if(this->is_negative())
         r.insert(0, 1, '-');
 
-    // AÒadimos el sufijo.
+    // A√±adimos el sufijo.
     r += suffix;
     
     return r;
@@ -824,7 +829,7 @@ std::string decimal::to_splain() const
 bool operator==(const decimal &a, const decimal &b)
 {
     // 1. Comparamos signos. Si son diferentes devolvemos falso.
-    // 2. Cambiamos el tamaÒo de b para que coincida con el de a.
+    // 2. Cambiamos el tama√±o de b para que coincida con el de a.
     // 3. Comparamos cifra a cifra.
 
     if(a.is_negative() != b.is_negative()) return false;
@@ -869,7 +874,7 @@ bool operator==(const decimal &a, const double &b)
 bool operator>=(const decimal &a, const decimal &b)
 {
     // 1. Comparamos signos. Si son distintos, el positivo es el mayor.
-    // 2. Cambiamos el tamaÒo de b para que coincida con el de a.
+    // 2. Cambiamos el tama√±o de b para que coincida con el de a.
     // 3. Comparamos cifra a cifra y devolvemos en consecuencia.
 
     if(a.is_negative() != b.is_negative())
@@ -917,7 +922,7 @@ bool operator>=(const decimal &a, const double &b)
 bool operator<=(const decimal &a, const decimal &b)
 {
     // 1. Comparamos signos. Si son distintos, el negativo es el menor.
-    // 2. Cambiamos el tamaÒo de b para que coincida con el de a.
+    // 2. Cambiamos el tama√±o de b para que coincida con el de a.
     // 3. Comparamos cifra a cifra, y devolvemos en consecuencia.
 
     if(a.is_negative() != b.is_negative())
@@ -985,7 +990,7 @@ decimal decimal::max() const
 
 decimal decimal::min() const
 {
-    // Todo a 0 excepto ˙ltima cifra. Signo positivo.
+    // Todo a 0 excepto √∫ltima cifra. Signo positivo.
 
     decimal t(cifs, decs);
 
